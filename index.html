@@ -25,6 +25,8 @@
   .badge.플러그인 { background:#f1e8f8; color:#7a3fa0; }
   .badge.에이전트 { background:#fff4d6; color:#8a6100; }
   .badge.MCP { background:#e0f4f4; color:#1f6f6f; }
+  .badge.프롬프트 { background:#fde7ef; color:#a3325c; }
+  .badge.단축키 { background:#ececec; color:#444; }
   .desc { color:var(--muted); font-size:14px; margin:0; }
   code { display:block; background:#f2f1ee; padding:8px; border-radius:6px; font-size:13px; white-space:pre-wrap; }
   .actions { display:flex; gap:6px; margin-top:auto; flex-wrap:wrap; }
@@ -47,7 +49,7 @@
 
 <script>
   const FAV_KEY = 'skill-favs';
-  const LABELS = { 내장: ['명령어', '공식 문서'], MCP: ['설치 명령', '원본 보기'], 플러그인: ['설치 명령', 'GitHub'], 에이전트: ['호출 문구', '원본 보기', '에이전트 .md 복사'] };
+  const LABELS = { 내장: ['명령어', '공식 문서'], 프롬프트: ['프롬프트', ''], 단축키: ['키', '공식 문서'], MCP: ['설치 명령', '원본 보기'], 플러그인: ['설치 명령', 'GitHub'], 에이전트: ['호출 문구', '원본 보기', '에이전트 .md 복사'] };
   const favs = new Set(JSON.parse(localStorage.getItem(FAV_KEY) || '[]'));
   let skills = [];
   let category = '전체';
@@ -104,7 +106,8 @@
     const b1 = el('button', { className: 'primary', textContent: copyLabel + ' 복사', onclick: () => copy(s.invoke, copyLabel) });
     // ponytail: 명령어·플러그인 카드는 SKILL.md가 없음 — path 없으면 복사 버튼 생략, url로 연결
     const b2 = s.path ? el('button', { textContent: fileLabel, onclick: () => copySkillBody(s) }) : '';
-    const a = el('a', { href: s.url || viewUrl(s.path), target: '_blank', rel: 'noopener', textContent: linkLabel });
+    const href = s.url || (s.path && viewUrl(s.path));
+    const a = href ? el('a', { href, target: '_blank', rel: 'noopener', textContent: linkLabel }) : '';
     return el('article', { className: 'card' },
       el('div', { className: 'top' },
         el('span', { className: 'name', textContent: s.id }),
