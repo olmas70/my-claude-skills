@@ -24,6 +24,7 @@
   .badge.내장 { background:#e6f4ea; color:#2e7d4f; }
   .badge.플러그인 { background:#f1e8f8; color:#7a3fa0; }
   .badge.에이전트 { background:#fff4d6; color:#8a6100; }
+  .badge.MCP { background:#e0f4f4; color:#1f6f6f; }
   .desc { color:var(--muted); font-size:14px; margin:0; }
   code { display:block; background:#f2f1ee; padding:8px; border-radius:6px; font-size:13px; white-space:pre-wrap; }
   .actions { display:flex; gap:6px; margin-top:auto; flex-wrap:wrap; }
@@ -46,7 +47,7 @@
 
 <script>
   const FAV_KEY = 'skill-favs';
-  const LABELS = { 내장: ['명령어', '공식 문서'], 플러그인: ['설치 명령', 'GitHub'], 에이전트: ['호출 문구', '원본 보기', '에이전트 .md 복사'] };
+  const LABELS = { 내장: ['명령어', '공식 문서'], MCP: ['설치 명령', '원본 보기'], 플러그인: ['설치 명령', 'GitHub'], 에이전트: ['호출 문구', '원본 보기', '에이전트 .md 복사'] };
   const favs = new Set(JSON.parse(localStorage.getItem(FAV_KEY) || '[]'));
   let skills = [];
   let category = '전체';
