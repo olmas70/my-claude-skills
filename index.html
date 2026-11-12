@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>내 Claude 스킬 모음</title>
+<style>
+  :root { --bg:#f6f5f2; --card:#fff; --ink:#1f1f1f; --muted:#6b6b6b; --line:#e3e1dc; --accent:#c96442; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: "Pretendard", "Malgun Gothic", system-ui, sans-serif; background:var(--bg); color:var(--ink); }
+  header { position:sticky; top:0; background:var(--bg); padding:20px 32px 12px; border-bottom:1px solid var(--line); z-index:1; }
+  h1 { margin:0 0 12px; font-size:22px; }
+  #q { width:100%; max-width:420px; padding:10px 12px; font-size:15px; border:1px solid var(--line); border-radius:8px; }
+  nav { display:flex; flex-wrap:wrap; gap:6px; margin-top:12px; }
+  nav button { border:1px solid var(--line); background:var(--card); padding:6px 12px; border-radius:999px; cursor:pointer; font-size:14px; }
+  nav button[aria-pressed="true"] { background:var(--ink); color:#fff; border-color:var(--ink); }
+  main { padding:20px 32px 48px; display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:14px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px; display:flex; flex-direction:column; gap:8px; }
+  .top { display:flex; justify-content:space-between; align-items:start; gap:8px; }
+  .name { font-weight:700; font-size:16px; word-break:break-all; }
+  .badge { font-size:12px; padding:2px 8px; border-radius:999px; background:#eee; white-space:nowrap; }
+  .badge.공식 { background:#fbe9e2; color:var(--accent); }
+  .badge.커뮤니티 { background:#e4eefb; color:#2f5ea8; }
+  .desc { color:var(--muted); font-size:14px; margin:0; }
+  code { display:block; background:#f2f1ee; padding:8px; border-radius:6px; font-size:13px; white-space:pre-wrap; }
+  .actions { display:flex; gap:6px; margin-top:auto; flex-wrap:wrap; }
+  .actions button, .actions a { font-size:13px; padding:6px 10px; border:1px solid var(--line); border-radius:6px; background:#fff; cursor:pointer; color:var(--ink); text-decoration:none; }
+  .actions button.primary { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .star { background:none; border:none; font-size:18px; cursor:pointer; color:#c9c9c9; padding:0; }
+  .star[aria-pressed="true"] { color:#e0a400; }
+  #toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:var(--ink); color:#fff; padding:10px 16px; border-radius:8px; opacity:0; transition:opacity .2s; pointer-events:none; }
+  #toast.show { opacity:1; }
+</style>
+</head>
+<body>
+<header>
+  <h1>내 Claude 스킬 모음</h1>
+  <input id="q" type="search" placeholder="스킬 검색 (이름·설명)" aria-label="스킬 검색">
+  <nav id="tabs" aria-label="카테고리"></nav>
+</header>
+<main id="list"></main>
+<div id="toast" role="status"></div>
+
+<script>
+  const FAV_KEY = 'skill-favs';
+  const favs = new Set(JSON.parse(localStorage.getItem(FAV_KEY) || '[]'));
+  let skills = [];
+  let category = '전체';
+
+  const $ = (sel) => document.querySelector(sel);
+  const el = (tag, props = {}, ...children) => {
+    const node = Object.assign(document.createElement(tag), props);
+    node.append(...children);
+    return node;
+  };
+
+  function toast(msg) {
+    const t = $('#toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 1500);
+  }
+
+  async function copy(text, label) {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast(`${label} 복사됨`);
+    } catch (err) {
+      toast('복사 실패: ' + err.message);
+    }
+  }
+
+  async function copySkillBody(skill) {
+    try {
+      const res = await fetch(skill.path);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      await copy(await res.text(), 'SKILL.md');
+    } catch (err) {
+      toast('SKILL.md 불러오기 실패: ' + err.message);
+    }
+  }
+
+  // ponytail: GitHub 웹 보기 링크는 raw 경로에서 유도 — 별도 필드 없음
+  function viewUrl(path) {
+    return path.startsWith('https://raw.githubusercontent.com/')
+      ? path.replace('raw.githubusercontent.com', 'github.com').replace(/\/main\//, '/blob/main/')
+      : path;
+  }
+
+  function card(s) {
+    const star = el('button', { className: 'star', textContent: '★', title: '즐겨찾기' });
+    star.setAttribute('aria-pressed', favs.has(s.id));
+    star.onclick = () => {
+      favs.has(s.id) ? favs.delete(s.id) : favs.add(s.id);
+      localStorage.setItem(FAV_KEY, JSON.stringify([...favs]));
+      render();
+    };
+    const b1 = el('button', { className: 'primary', textContent: '호출 문구 복사', onclick: () => copy(s.invoke, '호출 문구') });
+    const b2 = el('button', { textContent: 'SKILL.md 복사', onclick: () => copySkillBody(s) });
+    const a = el('a', { href: viewUrl(s.path), target: '_blank', rel: 'noopener', textContent: '원본 보기' });
+    return el('article', { className: 'card' },
+      el('div', { className: 'top' },
+        el('span', { className: 'name', textContent: s.id }),
+        el('span', {}, el('span', { className: 'badge ' + s.source, textContent: s.source }), ' ', star)),
+      el('p', { className: 'desc', textContent: s.desc }),
+      el('code', { textContent: s.invoke }),
+      el('div', { className: 'actions' }, b1, b2, a));
+  }
+
+  function render() {
+    const q = $('#q').value.trim().toLowerCase();
+    const shown = skills
+      .filter((s) => category === '전체' || (category === '★ 즐겨찾기' ? favs.has(s.id) : s.category === category))
+      .filter((s) => !q || (s.id + ' ' + s.desc).toLowerCase().includes(q))
+      .sort((a, b) => favs.has(b.id) - favs.has(a.id));
+    $('#list').replaceChildren(...shown.map(card));
+    if (!shown.length) $('#list').append(el('p', { textContent: '해당하는 스킬이 없습니다.' }));
+  }
+
+  function renderTabs() {
+    const cats = ['전체', '★ 즐겨찾기', ...new Set(skills.map((s) => s.category))];
+    $('#tabs').replaceChildren(...cats.map((c) => {
+      const b = el('button', { textContent: c, onclick: () => { category = c; renderTabs(); render(); } });
+      b.setAttribute('aria-pressed', c === category);
+      return b;
+    }));
+  }
+
+  $('#q').addEventListener('input', render);
+
+  fetch('skills.json')
+    .then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
+    .then((data) => { skills = data; renderTabs(); render(); })
+    .catch((err) => { $('#list').textContent = 'skills.json 로드 실패: ' + err.message + ' (file:// 로 열면 안 됩니다. 로컬 서버나 GitHub Pages로 여세요)'; });
+</script>
+</body>
+</html>
