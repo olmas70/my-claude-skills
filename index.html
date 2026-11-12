@@ -3,23 +3,45 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="자주 쓰는 Claude 프롬프트·명령어·단축키·스킬·플러그인·에이전트·MCP를 한 곳에서 복사해 쓰는 페이지">
+<meta name="theme-color" content="#f6f5f2">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A7%B0%3C/text%3E%3C/svg%3E">
 <title>내 Claude 활용 모음</title>
 <style>
-  :root { --bg:#f6f5f2; --card:#fff; --ink:#1f1f1f; --muted:#6b6b6b; --line:#e3e1dc; --accent:#c96442; }
+  :root {
+    --bg:#f6f5f2; --card:#fff; --ink:#1f1f1f; --muted:#6b6b6b; --line:#e3e1dc; --accent:#c96442;
+    --code-bg:#f2f1ee; --btn:#fff; --star:#c9c9c9; --shadow:0 6px 18px rgba(0,0,0,.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:#1b1a18; --card:#262521; --ink:#ecebe7; --muted:#a8a69f; --line:#3a3833; --accent:#e07a56;
+      --code-bg:#1f1e1b; --btn:#2f2e29; --star:#4a4844; --shadow:0 6px 18px rgba(0,0,0,.35);
+    }
+  }
   * { box-sizing: border-box; }
   body { margin:0; font-family: "Pretendard", "Malgun Gothic", system-ui, sans-serif; background:var(--bg); color:var(--ink); }
-  header { position:sticky; top:0; background:var(--bg); padding:20px 32px 12px; border-bottom:1px solid var(--line); z-index:1; }
-  h1 { margin:0 0 12px; font-size:22px; }
-  #q { width:100%; max-width:420px; padding:10px 12px; font-size:15px; border:1px solid var(--line); border-radius:8px; }
-  nav { display:flex; flex-wrap:wrap; gap:6px; margin-top:12px; }
-  nav button { border:1px solid var(--line); background:var(--card); padding:6px 12px; border-radius:999px; cursor:pointer; font-size:14px; }
-  nav button[aria-pressed="true"] { background:var(--ink); color:#fff; border-color:var(--ink); }
-  main { padding:20px 32px 48px; display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:14px; }
-  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px; display:flex; flex-direction:column; gap:8px; }
+  header { position:sticky; top:0; background:var(--bg); padding:18px 32px 10px; border-bottom:1px solid var(--line); z-index:1; }
+  .title { display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:10px; }
+  h1 { margin:0; font-size:22px; }
+  .sub { color:var(--muted); font-size:13px; }
+  .sub a { color:inherit; }
+  .search { position:relative; max-width:420px; }
+  #q { width:100%; padding:10px 12px; font-size:15px; border:1px solid var(--line); border-radius:8px; background:var(--card); color:var(--ink); }
+  #q:focus { outline:2px solid var(--accent); outline-offset:1px; }
+  .search kbd { position:absolute; right:10px; top:50%; transform:translateY(-50%); font-size:11px; color:var(--muted); border:1px solid var(--line); border-radius:4px; padding:1px 5px; background:var(--card); pointer-events:none; }
+  nav { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; align-items:center; }
+  nav button { border:1px solid var(--line); background:var(--card); color:var(--ink); padding:5px 11px; border-radius:999px; cursor:pointer; font-size:14px; display:inline-flex; gap:6px; align-items:center; }
+  nav button:hover { border-color:var(--muted); }
+  nav button[aria-pressed="true"] { background:var(--ink); color:var(--bg); border-color:var(--ink); }
+  nav button small { font-size:11px; opacity:.65; }
+  nav .sep { width:1px; height:22px; background:var(--line); margin:0 4px; }
+  main { padding:20px 32px 40px; display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:14px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px; display:flex; flex-direction:column; gap:8px; transition:box-shadow .15s, transform .15s; }
+  .card:hover { box-shadow:var(--shadow); transform:translateY(-1px); }
   .top { display:flex; justify-content:space-between; align-items:start; gap:8px; }
   .name { font-weight:700; font-size:16px; word-break:break-all; }
   .badge { font-size:12px; padding:2px 8px; border-radius:999px; background:#eee; white-space:nowrap; }
-  .badge.공식 { background:#fbe9e2; color:var(--accent); }
+  .badge.공식 { background:#fbe9e2; color:#b2492a; }
   .badge.커뮤니티 { background:#e4eefb; color:#2f5ea8; }
   .badge.내장 { background:#e6f4ea; color:#2e7d4f; }
   .badge.플러그인 { background:#f1e8f8; color:#7a3fa0; }
@@ -27,32 +49,65 @@
   .badge.MCP { background:#e0f4f4; color:#1f6f6f; }
   .badge.프롬프트 { background:#fde7ef; color:#a3325c; }
   .badge.단축키 { background:#ececec; color:#444; }
-  .desc { color:var(--muted); font-size:14px; margin:0; }
-  code { display:block; background:#f2f1ee; padding:8px; border-radius:6px; font-size:13px; white-space:pre-wrap; }
+  .badge.내\ 스킬 { background:#e8ecf5; color:#3b4a7a; }
+  .desc { color:var(--muted); font-size:14px; margin:0; line-height:1.45; }
+  code { display:block; background:var(--code-bg); padding:8px 10px; border-radius:6px; font-size:13px; white-space:pre-wrap; line-height:1.5; }
+  /* ponytail: 프롬프트는 문장이라 고정폭 대신 본문 서체로 보여줌 */
+  code.prompt { font-family:inherit; font-size:14px; border-left:3px solid var(--accent); }
   .actions { display:flex; gap:6px; margin-top:auto; flex-wrap:wrap; }
-  .actions button, .actions a { font-size:13px; padding:6px 10px; border:1px solid var(--line); border-radius:6px; background:#fff; cursor:pointer; color:var(--ink); text-decoration:none; }
+  .actions button, .actions a { font-size:13px; padding:6px 10px; border:1px solid var(--line); border-radius:6px; background:var(--btn); cursor:pointer; color:var(--ink); text-decoration:none; }
+  .actions button:hover, .actions a:hover { border-color:var(--muted); }
   .actions button.primary { background:var(--accent); color:#fff; border-color:var(--accent); }
-  .star { background:none; border:none; font-size:18px; cursor:pointer; color:#c9c9c9; padding:0; }
+  .actions button.done { background:#2e7d4f; border-color:#2e7d4f; color:#fff; }
+  .star { background:none; border:none; font-size:18px; cursor:pointer; color:var(--star); padding:0; line-height:1; }
   .star[aria-pressed="true"] { color:#e0a400; }
-  #toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:var(--ink); color:#fff; padding:10px 16px; border-radius:8px; opacity:0; transition:opacity .2s; pointer-events:none; }
+  .empty { grid-column:1/-1; color:var(--muted); padding:24px 0; }
+  footer { padding:0 32px 40px; color:var(--muted); font-size:13px; }
+  footer a { color:inherit; }
+  #toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:var(--ink); color:var(--bg); padding:10px 16px; border-radius:8px; opacity:0; transition:opacity .2s; pointer-events:none; }
   #toast.show { opacity:1; }
+  @media (max-width:600px) {
+    header, main, footer { padding-left:14px; padding-right:14px; }
+    main { grid-template-columns:1fr; }
+    .search kbd { display:none; }
+  }
 </style>
 </head>
 <body>
 <header>
-  <h1>내 Claude 활용 모음</h1>
-  <input id="q" type="search" placeholder="전체 검색 (이름·설명·명령어)" aria-label="전체 검색">
+  <div class="title">
+    <h1>내 Claude 활용 모음</h1>
+    <span class="sub" id="count"></span>
+  </div>
+  <div class="search">
+    <input id="q" type="search" placeholder="전체 검색 (이름·설명·명령어)" aria-label="전체 검색">
+    <kbd>/</kbd>
+  </div>
   <nav id="tabs" aria-label="카테고리"></nav>
 </header>
 <main id="list"></main>
+<footer>
+  사용법: 카드의 복사 버튼을 누르고 Claude Code 입력창(또는 터미널)에 붙여넣기 · ★는 이 브라우저에만 저장 ·
+  <a href="https://github.com/olmas70/my-claude-skills" target="_blank" rel="noopener">GitHub 저장소</a>
+</footer>
 <div id="toast" role="status"></div>
+<noscript>이 페이지는 JavaScript가 필요합니다.</noscript>
 
 <script>
   const FAV_KEY = 'skill-favs';
-  const LABELS = { 내장: ['명령어', '공식 문서'], 프롬프트: ['프롬프트', ''], 단축키: ['키', '공식 문서'], MCP: ['설치 명령', '원본 보기'], 플러그인: ['설치 명령', 'GitHub'], 에이전트: ['호출 문구', '원본 보기', '에이전트 .md 복사'] };
+  const LABELS = {
+    내장: ['명령어', '공식 문서'],
+    프롬프트: ['프롬프트', ''],
+    단축키: ['키', '공식 문서'],
+    MCP: ['설치 명령', '원본 보기'],
+    플러그인: ['설치 명령', 'GitHub'],
+    에이전트: ['호출 문구', '원본 보기', '에이전트 .md 복사'],
+  };
+  // ponytail: 탭 구분선 — 이 카테고리 앞에 세로선 하나
+  const GROUP_START = '문서·오피스';
   const favs = new Set(JSON.parse(localStorage.getItem(FAV_KEY) || '[]'));
   let skills = [];
-  let category = '전체';
+  let category = decodeURIComponent(location.hash.slice(1)) || '전체';
 
   const $ = (sel) => document.querySelector(sel);
   const el = (tag, props = {}, ...children) => {
@@ -68,22 +123,28 @@
     setTimeout(() => t.classList.remove('show'), 1500);
   }
 
-  async function copy(text, label) {
+  async function copy(text, label, btn) {
     try {
       await navigator.clipboard.writeText(text);
       toast(`${label} 복사됨`);
+      if (btn) {
+        const old = btn.textContent;
+        btn.textContent = '✓ 복사됨';
+        btn.classList.add('done');
+        setTimeout(() => { btn.textContent = old; btn.classList.remove('done'); }, 1200);
+      }
     } catch (err) {
       toast('복사 실패: ' + err.message);
     }
   }
 
-  async function copySkillBody(skill) {
+  async function copyFile(skill, label, btn) {
     try {
       const res = await fetch(skill.path);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      await copy(await res.text(), 'SKILL.md');
+      await copy(await res.text(), label, btn);
     } catch (err) {
-      toast('SKILL.md 불러오기 실패: ' + err.message);
+      toast(`${label} 불러오기 실패: ` + err.message);
     }
   }
 
@@ -95,7 +156,7 @@
   }
 
   function card(s) {
-    const star = el('button', { className: 'star', textContent: '★', title: '즐겨찾기' });
+    const star = el('button', { className: 'star', textContent: '★', title: '즐겨찾기', ariaLabel: `${s.id} 즐겨찾기` });
     star.setAttribute('aria-pressed', favs.has(s.id));
     star.onclick = () => {
       favs.has(s.id) ? favs.delete(s.id) : favs.add(s.id);
@@ -103,9 +164,11 @@
       render();
     };
     const [copyLabel, linkLabel, fileLabel = 'SKILL.md 복사'] = LABELS[s.source] || ['호출 문구', '원본 보기'];
-    const b1 = el('button', { className: 'primary', textContent: copyLabel + ' 복사', onclick: () => copy(s.invoke, copyLabel) });
-    // ponytail: 명령어·플러그인 카드는 SKILL.md가 없음 — path 없으면 복사 버튼 생략, url로 연결
-    const b2 = s.path ? el('button', { textContent: fileLabel, onclick: () => copySkillBody(s) }) : '';
+    const b1 = el('button', { className: 'primary', textContent: copyLabel + ' 복사' });
+    b1.onclick = () => copy(s.invoke, copyLabel, b1);
+    // ponytail: 명령어·플러그인·프롬프트 카드는 파일이 없음 — path 없으면 파일 복사 버튼 생략
+    const b2 = s.path ? el('button', { textContent: fileLabel }) : '';
+    if (b2) b2.onclick = () => copyFile(s, fileLabel.replace(' 복사', ''), b2);
     const href = s.url || (s.path && viewUrl(s.path));
     const a = href ? el('a', { href, target: '_blank', rel: 'noopener', textContent: linkLabel }) : '';
     return el('article', { className: 'card' },
@@ -113,7 +176,7 @@
         el('span', { className: 'name', textContent: s.id }),
         el('span', {}, el('span', { className: 'badge ' + s.source, textContent: s.source }), ' ', star)),
       el('p', { className: 'desc', textContent: s.desc }),
-      el('code', { textContent: s.invoke }),
+      el('code', { className: s.source === '프롬프트' ? 'prompt' : '', textContent: s.invoke }),
       el('div', { className: 'actions' }, b1, b2, a));
   }
 
@@ -121,26 +184,37 @@
     const q = $('#q').value.trim().toLowerCase();
     const shown = skills
       .filter((s) => category === '전체' || (category === '★ 즐겨찾기' ? favs.has(s.id) : s.category === category))
-      .filter((s) => !q || (s.id + ' ' + s.desc + ' ' + s.invoke).toLowerCase().includes(q))
+      .filter((s) => !q || (s.id + ' ' + s.desc + ' ' + s.invoke + ' ' + s.category).toLowerCase().includes(q))
       .sort((a, b) => favs.has(b.id) - favs.has(a.id));
     $('#list').replaceChildren(...shown.map(card));
-    if (!shown.length) $('#list').append(el('p', { textContent: '해당하는 스킬이 없습니다.' }));
+    if (!shown.length) $('#list').append(el('p', { className: 'empty', textContent: q ? `"${q}"에 해당하는 항목이 없습니다.` : '아직 ★ 즐겨찾기한 항목이 없습니다. 카드의 ★를 눌러 추가하세요.' }));
+    $('#count').textContent = `${shown.length} / ${skills.length}개`;
   }
 
   function renderTabs() {
     const cats = ['전체', '★ 즐겨찾기', ...new Set(skills.map((s) => s.category))];
-    $('#tabs').replaceChildren(...cats.map((c) => {
-      const b = el('button', { textContent: c, onclick: () => { category = c; renderTabs(); render(); } });
+    const count = (c) => c === '전체' ? skills.length : c === '★ 즐겨찾기' ? favs.size : skills.filter((s) => s.category === c).length;
+    $('#tabs').replaceChildren(...cats.flatMap((c) => {
+      const b = el('button', { onclick: () => { category = c; history.replaceState(null, '', c === '전체' ? location.pathname : '#' + encodeURIComponent(c)); renderTabs(); render(); } },
+        c, el('small', { textContent: count(c) }));
       b.setAttribute('aria-pressed', c === category);
-      return b;
+      return c === GROUP_START ? [el('span', { className: 'sep' }), b] : [b];
     }));
   }
 
   $('#q').addEventListener('input', render);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === '/' && document.activeElement !== $('#q')) { e.preventDefault(); $('#q').focus(); }
+    if (e.key === 'Escape' && document.activeElement === $('#q')) { $('#q').value = ''; render(); $('#q').blur(); }
+  });
 
   fetch('skills.json')
     .then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
-    .then((data) => { skills = data; renderTabs(); render(); })
+    .then((data) => {
+      skills = data;
+      if (!['전체', '★ 즐겨찾기'].includes(category) && !skills.some((s) => s.category === category)) category = '전체';
+      renderTabs(); render();
+    })
     .catch((err) => { $('#list').textContent = 'skills.json 로드 실패: ' + err.message + ' (file:// 로 열면 안 됩니다. 로컬 서버나 GitHub Pages로 여세요)'; });
 </script>
 </body>
