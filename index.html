@@ -63,6 +63,9 @@
   .actions button.done { background:#2e7d4f; border-color:#2e7d4f; color:#fff; }
   .star { background:none; border:none; font-size:18px; cursor:pointer; color:var(--star); padding:0; line-height:1; }
   .star[aria-pressed="true"] { color:#e0a400; }
+  .link { color:var(--muted); text-decoration:none; font-size:15px; line-height:1; padding:0 2px; }
+  .link:hover { color:var(--accent); }
+  .side { display:flex; align-items:center; gap:6px; }
   .empty { grid-column:1/-1; color:var(--muted); padding:24px 0; }
   footer { padding:0 32px 40px; color:var(--muted); font-size:13px; }
   footer a { color:inherit; }
@@ -89,7 +92,7 @@
 </header>
 <main id="list"></main>
 <footer>
-  사용법: 카드의 복사 버튼을 누르고 Claude Code 입력창(또는 터미널)에 붙여넣기 · ★는 이 브라우저에만 저장 ·
+  사용법: 복사 버튼을 누르고 Claude Code 입력창(또는 터미널)에 붙여넣기 · ↗ 원본·공식 문서 열기 · ★ 즐겨찾기(이 브라우저에만 저장) ·
   <a href="https://github.com/olmas70/my-claude-skills" target="_blank" rel="noopener">GitHub 저장소</a>
 </footer>
 <div id="toast" role="status"></div>
@@ -97,14 +100,15 @@
 
 <script>
   const FAV_KEY = 'skill-favs';
+  // [복사 버튼 문구, ↗ 링크 설명]. 템플릿은 파일 내용을 복사한다
   const LABELS = {
     내장: ['명령어', '공식 문서'],
     프롬프트: ['프롬프트', ''],
     단축키: ['키', '공식 문서'],
     MCP: ['설치 명령', '원본 보기'],
     플러그인: ['설치 명령', 'GitHub'],
-    에이전트: ['호출 문구', '원본 보기', '에이전트 .md 복사'],
-    템플릿: ['저장 경로', '원본 보기', '템플릿 복사'],
+    에이전트: ['호출 문구', '원본 보기'],
+    템플릿: ['템플릿', '원본 보기'],
     GitHub: ['링크', 'GitHub'],
   };
   // ponytail: 탭 구분선 — 이 카테고리 앞에 세로선 하나
@@ -167,21 +171,19 @@
       localStorage.setItem(FAV_KEY, JSON.stringify([...favs]));
       render();
     };
-    const [copyLabel, linkLabel, fileLabel = 'SKILL.md 복사'] = s.labels || LABELS[s.source] || ['호출 문구', '원본 보기'];
+    const [copyLabel, linkLabel] = s.labels || LABELS[s.source] || ['호출 문구', '원본 보기'];
     const b1 = el('button', { className: 'primary', textContent: copyLabel + ' 복사' });
-    b1.onclick = () => copy(s.invoke, copyLabel, b1);
-    // ponytail: 명령어·플러그인·프롬프트 카드는 파일이 없음 — path 없으면 파일 복사 버튼 생략
-    const b2 = s.path ? el('button', { textContent: fileLabel }) : '';
-    if (b2) b2.onclick = () => copyFile(s, fileLabel.replace(' 복사', ''), b2);
+    // ponytail: 버튼은 하나 — 템플릿만 파일 내용, 나머지는 invoke 문구. SKILL.md 전체가 필요하면 ↗로 원본에서
+    b1.onclick = () => (s.source === '템플릿' && s.path ? copyFile(s, copyLabel, b1) : copy(s.invoke, copyLabel, b1));
     const href = s.url || (s.path && viewUrl(s.path));
-    const a = href ? el('a', { href, target: '_blank', rel: 'noopener', textContent: linkLabel }) : '';
+    const a = href ? el('a', { className: 'link', href, target: '_blank', rel: 'noopener', textContent: '↗', title: linkLabel, ariaLabel: `${s.id} ${linkLabel}` }) : '';
     return el('article', { className: 'card' },
       el('div', { className: 'top' },
         el('span', { className: 'name', textContent: s.id }),
-        el('span', {}, el('span', { className: 'badge ' + s.source, textContent: s.source }), ' ', star)),
+        el('span', { className: 'side' }, el('span', { className: 'badge ' + s.source, textContent: s.source }), a, star)),
       el('p', { className: 'desc', textContent: s.desc }),
       el('code', { className: s.source === '프롬프트' ? 'prompt' : '', textContent: s.invoke }),
-      el('div', { className: 'actions' }, b1, b2, a));
+      el('div', { className: 'actions' }, b1));
   }
 
   function render() {
