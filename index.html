@@ -21,6 +21,7 @@
   .badge { font-size:12px; padding:2px 8px; border-radius:999px; background:#eee; white-space:nowrap; }
   .badge.공식 { background:#fbe9e2; color:var(--accent); }
   .badge.커뮤니티 { background:#e4eefb; color:#2f5ea8; }
+  .badge.내장 { background:#e6f4ea; color:#2e7d4f; }
   .desc { color:var(--muted); font-size:14px; margin:0; }
   code { display:block; background:#f2f1ee; padding:8px; border-radius:6px; font-size:13px; white-space:pre-wrap; }
   .actions { display:flex; gap:6px; margin-top:auto; flex-wrap:wrap; }
@@ -95,9 +96,10 @@
       localStorage.setItem(FAV_KEY, JSON.stringify([...favs]));
       render();
     };
-    const b1 = el('button', { className: 'primary', textContent: '호출 문구 복사', onclick: () => copy(s.invoke, '호출 문구') });
-    const b2 = el('button', { textContent: 'SKILL.md 복사', onclick: () => copySkillBody(s) });
-    const a = el('a', { href: viewUrl(s.path), target: '_blank', rel: 'noopener', textContent: '원본 보기' });
+    const b1 = el('button', { className: 'primary', textContent: s.path ? '호출 문구 복사' : '명령어 복사', onclick: () => copy(s.invoke, s.path ? '호출 문구' : '명령어') });
+    // ponytail: 명령어 카드는 SKILL.md가 없음 — path 없으면 복사 버튼 생략, url(공식 문서)로 연결
+    const b2 = s.path ? el('button', { textContent: 'SKILL.md 복사', onclick: () => copySkillBody(s) }) : '';
+    const a = el('a', { href: s.url || viewUrl(s.path), target: '_blank', rel: 'noopener', textContent: s.path ? '원본 보기' : '공식 문서' });
     return el('article', { className: 'card' },
       el('div', { className: 'top' },
         el('span', { className: 'name', textContent: s.id }),
@@ -111,7 +113,7 @@
     const q = $('#q').value.trim().toLowerCase();
     const shown = skills
       .filter((s) => category === '전체' || (category === '★ 즐겨찾기' ? favs.has(s.id) : s.category === category))
-      .filter((s) => !q || (s.id + ' ' + s.desc).toLowerCase().includes(q))
+      .filter((s) => !q || (s.id + ' ' + s.desc + ' ' + s.invoke).toLowerCase().includes(q))
       .sort((a, b) => favs.has(b.id) - favs.has(a.id));
     $('#list').replaceChildren(...shown.map(card));
     if (!shown.length) $('#list').append(el('p', { textContent: '해당하는 스킬이 없습니다.' }));
