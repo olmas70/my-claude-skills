@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet">
+<style>
+/* 큐티 묵상 팔레트: 아이보리 바탕 · 딥그린 강조 · 골드 포인트 */
+:root{--bg:#F5EFE4;--card:#FFFDF8;--green:#2E4A3B;--gold:#8C6A2F;--lgold:#E3C88F;--mint:#DCE6DE;
+  --pale:#EFE6D6;--line:#E6DCCB;--ink:#2B2A26;--muted:#6B6457}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#999}
+.card{width:1080px;height:1350px;background:var(--bg);padding:60px 64px 96px;position:relative;overflow:hidden;
+  font-family:'Pretendard',sans-serif;color:var(--ink);display:flex;flex-direction:column;word-break:keep-all}
+.serif{font-family:'Gowun Batang',serif}
+/* 머리말: 골드 단계 라벨 + 명조 제목 + 짧은 골드 선 */
+.hd{margin-bottom:36px}
+.hd .tag{font-size:22px;font-weight:700;letter-spacing:.18em;color:var(--gold)}
+.hd h2{font-family:'Gowun Batang',serif;font-size:56px;font-weight:700;color:var(--green);line-height:1.2;margin-top:10px}
+.hd p{font-size:25px;color:var(--muted);margin-top:10px}
+.hd::after{content:'';display:block;width:64px;height:4px;background:var(--gold);margin-top:22px}
+/* 바닥: 진행 점 + 워터마크 */
+.dots{position:absolute;left:64px;bottom:40px;display:flex;gap:10px}
+.dots i{width:12px;height:12px;border-radius:50%;background:var(--line)}
+.dots i.on{background:var(--green);width:36px;border-radius:6px}
+.wm{position:absolute;right:64px;bottom:34px;font-size:20px;letter-spacing:.2em;color:var(--muted);font-weight:700}
+.box{background:var(--card);border-radius:28px;padding:40px 44px}
+
+/* c1 표지: 아치형 그린 패널 */
+#c1{padding-top:56px}
+.top{display:flex;justify-content:space-between;font-size:22px;font-weight:700;letter-spacing:.18em;color:var(--gold);margin-bottom:30px}
+.arch{background:var(--green);color:#fff;border-radius:440px 440px 28px 28px;padding:120px 70px 64px;text-align:center}
+.arch .ref{display:inline-block;border:2px solid var(--lgold);color:var(--lgold);border-radius:40px;padding:8px 26px;font-size:25px;font-weight:700}
+.arch h1{font-family:'Gowun Batang',serif;font-size:124px;font-weight:700;line-height:1.15;margin:34px 0 30px}
+.arch p{font-size:31px;line-height:1.6;color:var(--mint)}
+.key{margin-top:24px;position:relative;padding-top:48px}
+.key::before{content:'“';position:absolute;left:36px;top:-6px;font-family:'Gowun Batang',serif;font-size:130px;color:var(--lgold);line-height:1}
+.key q{display:block;quotes:none;font-family:'Gowun Batang',serif;font-size:33px;line-height:1.6;color:var(--green);font-weight:700}
+.key cite{display:block;font-style:normal;font-size:23px;color:var(--gold);font-weight:700;margin-top:14px}
+.chips{display:flex;gap:14px;margin-top:24px}
+.chips span{flex:1;text-align:center;background:var(--pale);border-radius:40px;padding:18px 0;font-size:28px;font-weight:700;color:var(--green)}
+.chips b{color:var(--gold);margin-right:8px}
+
+/* c2 말씀: 절 번호 + 명조 본문 */
+.verses{flex:1;display:flex;flex-direction:column;justify-content:space-between}
+.v{display:grid;grid-template-columns:72px 1fr;gap:20px;align-items:start;padding:16px 0;border-bottom:1px solid var(--line)}
+.v:last-child{border-bottom:0}
+.v .n{width:64px;height:64px;border-radius:50%;background:var(--green);color:var(--lgold);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800}
+.v p{font-family:'Gowun Batang',serif;font-size:31px;line-height:1.65;padding-top:6px}
+.v p b{color:var(--green);background:linear-gradient(transparent 62%,var(--lgold) 62%)}
+.v small{display:block;font-family:'Pretendard',sans-serif;font-size:23px;color:var(--gold);font-weight:700;margin-bottom:2px}
+.skip{text-align:center;font-size:23px;color:var(--muted);margin-top:4px}
+
+/* c3 묵상: 세로 타임라인 3단계 */
+.tl{flex:1;display:flex;flex-direction:column;gap:18px;position:relative}
+.tl::before{content:'';position:absolute;left:35px;top:40px;bottom:40px;width:3px;background:var(--line)}
+.pt{display:grid;grid-template-columns:72px 1fr;gap:22px;flex:1}
+.pt .n{position:relative;z-index:1;width:72px;height:72px;border-radius:50%;background:var(--card);border:3px solid var(--green);color:var(--green);
+  display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:800}
+.pt .box{padding:30px 36px;display:flex;flex-direction:column;justify-content:center}
+.pt .kw{font-size:23px;font-weight:700;letter-spacing:.06em;color:var(--gold)}
+.pt h3{font-family:'Gowun Batang',serif;font-size:37px;color:var(--green);line-height:1.35;margin:8px 0 12px}
+.pt p{font-size:26px;line-height:1.6;color:var(--muted)}
+.insight{margin-top:20px;background:var(--green);color:#fff;border-radius:28px;padding:30px 44px;font-family:'Gowun Batang',serif;font-size:31px;line-height:1.55;text-align:center}
+.insight b{color:var(--lgold)}
+
+/* c4 적용·기도 */
+.apply{display:flex;flex-direction:column;gap:14px}
+.ck{display:grid;grid-template-columns:52px 1fr;gap:20px;align-items:start;background:var(--card);border-radius:24px;padding:28px 34px}
+.ck .bx{width:44px;height:44px;border:3px solid var(--green);border-radius:10px;margin-top:4px}
+.ck p{font-size:29px;line-height:1.5;font-weight:700}
+.ck span{display:block;font-size:24px;font-weight:400;color:var(--muted);margin-top:6px}
+.pray{flex:1;margin-top:22px;background:var(--green);color:#fff;border-radius:28px 28px 220px 220px;padding:44px 56px 70px;display:flex;flex-direction:column}
+.pray .lbl{font-size:23px;font-weight:700;letter-spacing:.18em;color:var(--lgold);text-align:center}
+.pray p{font-family:'Gowun Batang',serif;font-size:30px;line-height:1.75;margin-top:18px;color:var(--mint);flex:1;display:flex;align-items:center}
+.pray .amen{display:block;text-align:center;font-family:'Gowun Batang',serif;font-size:36px;font-weight:700;color:var(--lgold);margin-top:10px}
+</style></head><body>
+
+<section class="card" id="c1">
+  <div class="top"><span>QUIET TIME</span><span>2026. 11. 13</span></div>
+  <div class="arch"><span class="ref">고린도전서 9:1–12</span>
+    <h1>범사에<br>참습니다</h1>
+    <p>권리가 없어서 참은 것이 아닙니다.<br>분명히 있었지만 쓰지 않고<br>복음을 위해 내려놓았습니다.</p></div>
+  <div class="box key"><q>이 권을 쓰지 아니하고 범사에 참는 것은<br>그리스도의 복음에 아무 장애가 없게 하려 함이로다</q><cite>고린도전서 9:12</cite></div>
+  <div class="chips"><span><b>1</b>인침</span><span><b>2</b>권리</span><span><b>3</b>내려놓음</span></div>
+  <div class="dots"><i class="on"></i><i></i><i></i><i></i></div><div class="wm">QT · 1 COR 9</div>
+</section>
+
+<section class="card" id="c2">
+  <div class="hd"><div class="tag">STEP 01 · 말씀 읽기</div><h2>오늘의 본문</h2><p>천천히 소리 내어 읽으며 마음에 닿는 단어에 머뭅니다</p></div>
+  <div class="box verses">
+    <div class="v"><div class="n">1</div><p>내가 자유자가 아니냐 사도가 아니냐 예수 우리 주를 보지 못하였느냐 <b>주 안에서 행한 나의 일이 너희가 아니냐</b></p></div>
+    <div class="v"><div class="n">2</div><p>다른 사람들에게는 내가 사도가 아닐지라도 너희에게는 사도니 <b>나의 사도 됨을 주 안에서 인친 것이 너희라</b></p></div>
+    <div class="v"><div class="n">7</div><p>누가 자비량하고 병정을 다니겠느냐 누가 포도를 심고 <b>그&nbsp;실과를 먹지 않겠느냐</b></p></div>
+    <div class="v"><div class="n">11</div><p>우리가 너희에게 <b>신령한 것을 뿌렸은즉</b> 너희 육신의 것을 거두기로 과하다 하겠느냐</p></div>
+    <div class="v"><div class="n">12</div><p>그러나 우리가 <b>이 권을 쓰지 아니하고 범사에 참는 것은</b> 그리스도의 복음에 아무 장애가 없게 하려 함이로다</p></div>
+  </div>
+  <div class="skip">(3–6, 8–10절 생략)</div>
+  <div class="dots"><i></i><i class="on"></i><i></i><i></i></div><div class="wm">QT · 1 COR 9</div>
+</section>
+
+<section class="card" id="c3">
+  <div class="hd"><div class="tag">STEP 02 · 묵상</div><h2>말씀이 내게 주는 깨달음</h2><p>인침 → 권리 → 내려놓음</p></div>
+  <div class="tl">
+    <div class="pt"><div class="n">1</div><div class="box"><span class="kw">인침 · 1–2절</span>
+      <h3>내가 세운 사람이 나를 증명합니다</h3>
+      <p>사역의 증거는 직함이나 평판이 아니라, 주님 앞에서 살아난 한 사람의 변화입니다.</p></div></div>
+    <div class="pt"><div class="n">2</div><div class="box"><span class="kw">권리 · 3–11절</span>
+      <h3>말씀을 귀히 여기는 만큼 섬깁니다</h3>
+      <p>신령한 것을 뿌린 자가 육적인 것을 거두는 것은 정당합니다. 고린도 교회는 말씀을 귀히 여기지 않아 섬기지 못했습니다.</p></div></div>
+    <div class="pt"><div class="n">3</div><div class="box"><span class="kw">내려놓음 · 12절</span>
+      <h3>권리를 쓰지 않고 참았습니다</h3>
+      <p>복음이 돈벌이로 오해받지 않도록 천막을 만들며 일했습니다. 자기를 비우신 그리스도의 모습입니다.</p></div></div>
+  </div>
+  <div class="insight">내가 붙잡으면 복음이 막히고<br><b>내려놓으면 복음이 흘러갑니다</b></div>
+  <div class="dots"><i></i><i></i><i class="on"></i><i></i></div><div class="wm">QT · 1 COR 9</div>
+</section>
+
+<section class="card" id="c4">
+  <div class="hd"><div class="tag">STEP 03 · 적용과 기도</div><h2>오늘 붙들 한 걸음</h2><p>말씀대로 살아낼 작은 결단을 적어 봅니다</p></div>
+  <div class="apply">
+    <div class="ck"><div class="bx"></div><p>당연하다 여기며 붙잡은 권리 하나를 내려놓겠습니다<span>그 권리가 누군가에게 복음의 장애가 되는지 살피기</span></p></div>
+    <div class="ck"><div class="bx"></div><p>나를 인쳐 줄 한 사람을 위해 기도하겠습니다<span>내가 전도하고 섬길 가족·동료의 이름 적기</span></p></div>
+    <div class="ck"><div class="bx"></div><p>말씀으로 받은 은혜를 귀히 여기겠습니다<span>간증처럼 술자리에서도 술 대신 음료를 택하기</span></p></div>
+  </div>
+  <div class="pray"><span class="lbl">오늘의 기도</span>
+    <p>지금 누릴 수 있는 것을 복음 위해 포기하기 싫어하는 저희를 불쌍히 여겨 주옵소서. 가정과 학교와 일터에 사도로 보내심을 깨닫고, 권리를 내려놓고 범사에 참음으로 각 가정에 구원이 임하게 하옵소서.</p>
+    <span class="amen">아멘</span></div>
+  <div class="dots"><i></i><i></i><i></i><i class="on"></i></div><div class="wm">QT · 1 COR 9</div>
+</section>
+</body></html>

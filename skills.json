@@ -178,5 +178,6 @@
   {"id":"academy-guide","category":"지식·요약","source":"공식","desc":"Claude 사용법 질문에 Claude Academy 강좌·튜토리얼 추천","invoke":"academy-guide 스킬로 Claude 스킬 사용법 배울 강좌 추천해줘","path":"https://raw.githubusercontent.com/anthropics/skills/main/skills/academy-guide/SKILL.md"},
   {"id":"academic-pipeline","category":"지식·요약","source":"커뮤니티","desc":"자료조사→작성→검증→리뷰→수정→완성 학술 글쓰기 전체 흐름 — ⭐56.6k","invoke":"/academic-pipeline 주제: ","path":"https://raw.githubusercontent.com/Imbad0202/academic-research-skills/main/academic-pipeline/SKILL.md"},
   {"id":"deep-research","category":"지식·요약","source":"커뮤니티","desc":"심층 리서치(빠른 브리프·문헌 검토·팩트체크 등 8가지 모드) — academic-research-skills","invoke":"/deep-research 주제: ","path":"https://raw.githubusercontent.com/Imbad0202/academic-research-skills/main/deep-research/SKILL.md"},
-  {"id":"bible-formatter","category":"생활·신앙","source":"내 스킬","desc":"성경 본문을 읽기 쉬운 내려쓰기 형식으로 정리","invoke":"/bible-formatter ","path":"skills/bible-formatter/SKILL.md"}
+  {"id":"bible-formatter","category":"생활·신앙","source":"내 스킬","desc":"성경 본문을 읽기 쉬운 내려쓰기 형식으로 정리","invoke":"/bible-formatter ","path":"skills/bible-formatter/SKILL.md"},
+  {"id":"youtube-qt-cardnews","category":"생활·신앙","source":"내 스킬","desc":"유튜브 QT 영상 → 요약 → 모바일 txt → 큐티 카드뉴스 4장(PNG) 한 번에 (assets 폴더 함께 필요)","invoke":"/youtube-qt-cardnews ","path":"skills/youtube-qt-cardnews/SKILL.md"}
 ]
