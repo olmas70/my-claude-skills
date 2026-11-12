@@ -49,6 +49,7 @@
   .badge.MCP { background:#e0f4f4; color:#1f6f6f; }
   .badge.프롬프트 { background:#fde7ef; color:#a3325c; }
   .badge.단축키 { background:#ececec; color:#444; }
+  .badge.템플릿 { background:#dfe9e4; color:#2d5f4a; }
   .badge.내\ 스킬 { background:#e8ecf5; color:#3b4a7a; }
   .desc { color:var(--muted); font-size:14px; margin:0; line-height:1.45; }
   code { display:block; background:var(--code-bg); padding:8px 10px; border-radius:6px; font-size:13px; white-space:pre-wrap; line-height:1.5; }
@@ -102,6 +103,7 @@
     MCP: ['설치 명령', '원본 보기'],
     플러그인: ['설치 명령', 'GitHub'],
     에이전트: ['호출 문구', '원본 보기', '에이전트 .md 복사'],
+    템플릿: ['저장 경로', '원본 보기', '템플릿 복사'],
   };
   // ponytail: 탭 구분선 — 이 카테고리 앞에 세로선 하나
   const GROUP_START = '문서·오피스';
@@ -163,7 +165,7 @@
       localStorage.setItem(FAV_KEY, JSON.stringify([...favs]));
       render();
     };
-    const [copyLabel, linkLabel, fileLabel = 'SKILL.md 복사'] = LABELS[s.source] || ['호출 문구', '원본 보기'];
+    const [copyLabel, linkLabel, fileLabel = 'SKILL.md 복사'] = s.labels || LABELS[s.source] || ['호출 문구', '원본 보기'];
     const b1 = el('button', { className: 'primary', textContent: copyLabel + ' 복사' });
     b1.onclick = () => copy(s.invoke, copyLabel, b1);
     // ponytail: 명령어·플러그인·프롬프트 카드는 파일이 없음 — path 없으면 파일 복사 버튼 생략
